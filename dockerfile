@@ -1,17 +1,17 @@
 #The base image to use in the build
-FROM centos:centos6
-MAINTAINER The Sagar Pimparkar <sagar.pimparkar27@gmail.com>
+FROM centos:7
+MAINTAINER  pradeep.karra9@gmail.com
+#Installing python
+RUN yum -y install epel-release; yum clean all
+RUN yum -y install python-pip; yum clean all
 #Installing MongoDB server using epel release Repo
 RUN yum -y update; yum clean all
-RUN yum -y install epel-release; yum clean all
 RUN yum -y install mongodb-server; yum clean all
 RUN mkdir -p /data/db
 #Opens a port for linked containers
 EXPOSE 27017
 ENTRYPOINT ["/usr/bin/mongod"]
-#Installing python
-RUN yum -y install python-pip; yum clean all
-#To install Apache Tomcat 7
+#To install Apache Tomcat 8
 #Install WGET
 RUN yum install -y wget
 #Install tar
@@ -36,4 +36,4 @@ EXPOSE 8080
 CMD ["catalina.sh", "run"]
 
 Command to run the Dockerfile such that once the container boots, apache tomcat's home page is accessible from the host on port 7080:
-docker run --name test -p 7080:8080 sagydocker/test:latest
+docker run --name test -p 7080:8080 docker/myimage:latest

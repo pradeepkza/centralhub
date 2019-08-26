@@ -1,0 +1,46 @@
+---
+- hosts: all
+  become: true
+  become_method: sudo
+  remote_user: root
+  connection: ssh 
+
+  tasks:
+  - name: Install on centos server
+    yum: 
+      name: {{ item }} 
+      state: latest
+    with_items:
+     - htop
+     - iftop
+     - iotop
+     - ncdu
+    when: ansible_facts['os_family'] == "RedHat"
+
+  - name: Install on ubuntu server
+    apt: 
+      name: {{ item }} 
+      state: latest
+    with_items:
+     - htop
+     - ftop
+     - Iotop
+     - ncdu
+    when: ansible_facts['os_family'] == "Debian"
+  - name: copy a sample script file
+    copy:
+      src: ~/sample.sh
+      dest: /opt/
+      owner: root
+      group: root
+      mode: 0755
+  - name: Executing sample script
+    shell: /opt/sample.sh >> /opt/sampleoutput.txt
+    when: ansible_facts['os_family'] == "RedHat"
+  - name: copying the result of the script to ansible master
+    fetch: src=/opt/sampleoutput.txt dest=~/ flat=yes
+
+# Add below line to ansible.cfg to see time taken for each task
+# callback_whitelist = profile_tasks
+   To run this above playbook save the file as play.yml
+anisble-playbook play.yml
